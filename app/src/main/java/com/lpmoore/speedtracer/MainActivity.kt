@@ -116,9 +116,9 @@ class MainActivity : AppCompatActivity(), GameView.Listener {
             store.setLevel(nextLevel)
             soundSynth.play(SoundSynth.SoundType.LEVEL_UP)
             AlertDialog.Builder(this)
-                .setTitle("LEVEL UP!")
-                .setMessage("Congratulations! You've been promoted to Level $nextLevel.")
-                .setPositiveButton("Awesome") { _, _ ->
+                .setTitle(R.string.level_up_title)
+                .setMessage(getString(R.string.level_up_message, nextLevel))
+                .setPositiveButton(R.string.level_up_button) { _, _ ->
                     refreshLevel()
                     refreshBest()
                     resultPanel.visibility = View.VISIBLE
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity(), GameView.Listener {
                 it.score, it.accuracyPct, it.coveragePct, it.timeMs / 1000.0, fmt.format(Date(it.at)))
         }
         AlertDialog.Builder(this)
-            .setTitle("Previous scores (Level $level)")
+            .setTitle(getString(R.string.history_title, level))
             .setMessage(text)
             .setPositiveButton(R.string.close, null)
             .show()
