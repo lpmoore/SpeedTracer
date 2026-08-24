@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
@@ -27,6 +28,13 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     var listener: Listener? = null
     var state = State.IDLE
         private set
+
+    var currentLevel = 1
+    private val totalCircles: Int get() = currentLevel.coerceIn(1, 3)
+    private val timeLimitMs: Long get() = currentLevel * 3000L
+    private var currentCircleIndex = 0
+    private val circleResults = ArrayList<RoundResult>()
+    private var totalElapsedMs = 0L
 
     private val density = resources.displayMetrics.density
     private val minRadius = 15f * density     // 15dp ≈ 3/16" diameter at 160dpi baseline
@@ -66,8 +74,9 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private val frame = object : Runnable {
         override fun run() {
             if (state == State.TRACING) {
-                val elapsed = SystemClock.uptimeMillis() - traceStart
-                val remaining = Scorer.TIME_LIMIT_MS - elapsed
+                val elapsedThisCircle = SystemClock.uptimeMillis() - traceStart
+                val totalElapsed = totalElapsedMs + elapsedThisCircle
+                val remaining = timeLimitMs - totalElapsed
                 listener?.onTick(max(0L, remaining))
                 beepIfNewSecond(remaining)
                 if (remaining <= 0) { finish(interrupted = false); return }
@@ -78,6 +87,10 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     }
 
     fun startRound() {
+        currentCircleIndex = 0
+        totalElapsedMs = 0L
+        circleResults.clear()
+
         radius = minRadius + Random.nextFloat() * (maxRadius - minRadius)
         tolerance = max(radius * 0.45f, 10f * density)
         val margin = radius + 32f * density
@@ -89,7 +102,7 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         traceStart = 0L
         state = State.READY
         if (tone == null) tone = try { ToneGenerator(AudioManager.STREAM_MUSIC, 70) } catch (_: RuntimeException) { null }
-        listener?.onTick(Scorer.TIME_LIMIT_MS)
+        listener?.onTick(timeLimitMs)
         removeCallbacks(frame)
         postOnAnimation(frame)
         invalidate()
@@ -149,15 +162,56 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private fun finish(interrupted: Boolean) {
         if (state != State.TRACING) return
-        state = State.FINISHED
-        removeCallbacks(frame)
-        val elapsed = (SystemClock.uptimeMillis() - traceStart).coerceAtMost(Scorer.TIME_LIMIT_MS)
-        tone?.startTone(if (interrupted) ToneGenerator.TONE_PROP_NACK else ToneGenerator.TONE_PROP_ACK, 150)
-        listener?.onTick(Scorer.TIME_LIMIT_MS - elapsed)
-        invalidate()
-        listener?.onRoundFinished(
-            Scorer.score(points, pointCount, cx, cy, radius, tolerance, elapsed, interrupted)
+        val elapsedThisCircle = SystemClock.uptimeMillis() - traceStart
+        totalElapsedMs += elapsedThisCircle
+
+        val circleResult = Scorer.score(
+            points, pointCount, cx, cy, radius, tolerance,
+            elapsedThisCircle, interrupted
         )
+        circleResults.add(circleResult)
+
+        if (interrupted || circleResults.size >= totalCircles || totalElapsedMs >= timeLimitMs) {
+            state = State.FINISHED
+            removeCallbacks(frame)
+            tone?.startTone(if (interrupted) ToneGenerator.TONE_PROP_NACK else ToneGenerator.TONE_PROP_ACK, 150)
+
+            while (circleResults.size < totalCircles) {
+                circleResults.add(RoundResult(0, 0, 0, 0L, interrupted))
+            }
+
+            val avgScore = circleResults.map { it.score }.average().roundToInt()
+            val avgAcc = circleResults.map { it.accuracyPct }.average().roundToInt()
+            val avgCov = circleResults.map { it.coveragePct }.average().roundToInt()
+
+            listener?.onTick(max(0L, timeLimitMs - totalElapsedMs))
+            invalidate()
+            listener?.onRoundFinished(
+                RoundResult(
+                    score = avgScore,
+                    accuracyPct = avgAcc,
+                    coveragePct = avgCov,
+                    timeMs = totalElapsedMs,
+                    interrupted = interrupted
+                )
+            )
+        } else {
+            currentCircleIndex++
+            setupNextCircle()
+        }
+    }
+
+    private fun setupNextCircle() {
+        radius = minRadius + Random.nextFloat() * (maxRadius - minRadius)
+        tolerance = max(radius * 0.45f, 10f * density)
+        val margin = radius + 32f * density
+        cx = margin + Random.nextFloat() * (width - 2 * margin)
+        cy = margin + Random.nextFloat() * (height - 2 * margin)
+        pointCount = 0
+        roundStart = SystemClock.uptimeMillis()
+        state = State.READY
+        tone?.startTone(ToneGenerator.TONE_PROP_BEEP, 80)
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {

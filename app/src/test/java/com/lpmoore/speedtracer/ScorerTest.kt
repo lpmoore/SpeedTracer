@@ -1,5 +1,8 @@
 package com.lpmoore.speedtracer
 
+import android.content.Context
+import android.content.SharedPreferences
+import java.lang.reflect.Proxy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -42,5 +45,54 @@ class ScorerTest {
         assertEquals(4, ExplosionView.tierForScore(900))
         assertEquals(5, ExplosionView.tierForScore(1000))
         assertEquals(0, ExplosionView.tierForScore(499))
+    }
+
+    @Test fun scoreStoreLevelPersistenceAndPromotion() {
+        val prefsMap = mutableMapOf<String, Any?>()
+
+        val editorProxy = Proxy.newProxyInstance(
+            SharedPreferences.Editor::class.java.classLoader,
+            arrayOf(SharedPreferences.Editor::class.java)
+        ) { proxy, method, args ->
+            when (method.name) {
+                "putString" -> { prefsMap[args[0] as String] = args[1]; proxy }
+                "putInt" -> { prefsMap[args[0] as String] = args[1]; proxy }
+                "apply" -> Unit
+                else -> null
+            }
+        } as SharedPreferences.Editor
+
+        val prefsProxy = Proxy.newProxyInstance(
+            SharedPreferences::class.java.classLoader,
+            arrayOf(SharedPreferences::class.java)
+        ) { _, method, args ->
+            when (method.name) {
+                "getString" -> prefsMap[args[0] as String] as? String ?: args[1] as? String
+                "getInt" -> prefsMap[args[0] as String] as? Int ?: args[1] as? Int
+                "edit" -> editorProxy
+                else -> null
+            }
+        } as SharedPreferences
+
+        val store = ScoreStore(prefsProxy)
+
+        // Default level is 1
+        assertEquals(1, store.getLevel())
+
+        // Set level to 2 and check persistence
+        store.setLevel(2)
+        assertEquals(2, store.getLevel())
+
+        // Check promotion check behavior on Level 2 (requires 6 out of 10 >= 750)
+        assertEquals(false, store.checkPromotion(2))
+
+        // Add 6 passing scores
+        for (i in 1..6) {
+            store.add(RoundResult(800, 95, 95, 1200L, false), 2)
+        }
+        assertEquals(true, store.checkPromotion(2))
+
+        // Check that Level 1 is unaffected and is still false
+        assertEquals(false, store.checkPromotion(1))
     }
 }
