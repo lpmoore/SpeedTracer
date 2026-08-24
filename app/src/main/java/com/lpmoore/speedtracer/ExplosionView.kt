@@ -56,8 +56,12 @@ class ExplosionView @JvmOverloads constructor(
      * @param score 500–1000. Controls particle count, speed, and size.
      *              Clamped; scores below 500 produce no explosion.
      */
-    fun explode(cx: Float, cy: Float, score: Int) {
-        if (score < 500) { visibility = GONE; return }
+    fun explode(cx: Float, cy: Float, score: Int, onComplete: (() -> Unit)? = null) {
+        if (score < 500) {
+            visibility = GONE
+            onComplete?.invoke()
+            return
+        }
 
         animator?.cancel()
         originX = cx
@@ -98,6 +102,7 @@ class ExplosionView @JvmOverloads constructor(
             addListener(object : android.animation.AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: android.animation.Animator) {
                     visibility = GONE
+                    onComplete?.invoke()
                 }
             })
             start()
