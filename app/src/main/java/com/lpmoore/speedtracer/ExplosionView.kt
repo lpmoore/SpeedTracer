@@ -63,9 +63,9 @@ class ExplosionView @JvmOverloads constructor(
         originX = cx
         originY = cy
 
-        // Scale factor: 0.0 at 750, 1.0 at 1000. Bumps every 50 pts.
+        // Scale factor: 0.0 at 750, 1.0 at 1000. Bumps every 50 pts (5 tiers).
         val tier = tierForScore(score)
-        val scale = (tier + 1) / 6f                        // 1/6 .. 1.0
+        val scale = tier / 5f                              // 0.0 .. 1.0
 
         val particleCount = (30 + 50 * scale).toInt()
         val maxSpeed = (200f + 400f * scale) * density
