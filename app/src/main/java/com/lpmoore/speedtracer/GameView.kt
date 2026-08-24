@@ -16,6 +16,7 @@ import kotlin.random.Random
 class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
 
+
     enum class State { IDLE, READY, TRACING, FINISHED }
 
     interface Listener {
@@ -93,6 +94,8 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         postOnAnimation(frame)
         invalidate()
     }
+
+    fun circleCenter(): Pair<Float, Float> = cx to cy
 
     fun reset() {
         state = State.IDLE

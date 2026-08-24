@@ -6,7 +6,14 @@
     <com.lpmoore.speedtracer.GameView
         android:id="@+id/gameView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/bg" />
+
+    <com.lpmoore.speedtracer.ExplosionView
+        android:id="@+id/explosionView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/timerText"

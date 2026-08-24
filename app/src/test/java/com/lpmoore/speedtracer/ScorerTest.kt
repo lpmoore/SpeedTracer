@@ -33,4 +33,14 @@ class ScorerTest {
     @Test fun tooFewPointsScoresZero() {
         assertEquals(0, Scorer.score(FloatArray(2), 2, 0f, 0f, 10f, 10f, 0, true).score)
     }
+
+    @Test fun explosionTierMatchesPlanBands() {
+        assertEquals(0, ExplosionView.tierForScore(750))
+        assertEquals(1, ExplosionView.tierForScore(800))
+        assertEquals(2, ExplosionView.tierForScore(850))
+        assertEquals(3, ExplosionView.tierForScore(900))
+        assertEquals(4, ExplosionView.tierForScore(950))
+        assertEquals(5, ExplosionView.tierForScore(1000))
+        assertEquals(0, ExplosionView.tierForScore(749))
+    }
 }

@@ -14,6 +14,7 @@ import java.util.Locale
 class MainActivity : AppCompatActivity(), GameView.Listener {
 
     private lateinit var game: GameView
+    private lateinit var explosionView: ExplosionView
     private lateinit var timerText: TextView
     private lateinit var bestText: TextView
     private lateinit var startButton: Button
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), GameView.Listener {
 
         store = ScoreStore(this)
         game = findViewById(R.id.gameView)
+        explosionView = findViewById(R.id.explosionView)
         timerText = findViewById(R.id.timerText)
         bestText = findViewById(R.id.bestText)
         startButton = findViewById(R.id.startButton)
@@ -57,6 +59,8 @@ class MainActivity : AppCompatActivity(), GameView.Listener {
     override fun onRoundFinished(result: RoundResult) {
         store.add(result)
         refreshBest()
+        val (cx, cy) = game.circleCenter()
+        explosionView.explode(cx, cy, result.score)
         resultScore.text = result.score.toString()
         resultDetails.text = buildString {
             append("Accuracy ${result.accuracyPct}%  •  Coverage ${result.coveragePct}%\n")
