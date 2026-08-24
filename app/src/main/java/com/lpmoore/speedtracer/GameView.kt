@@ -162,9 +162,9 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
 
     private fun finish(interrupted: Boolean) {
         if (state != State.TRACING) return
-        val elapsedThisCircle = SystemClock.uptimeMillis() - traceStart
-        totalElapsedMs += elapsedThisCircle
-
+val remainingForThisCircle = (timeLimitMs - totalElapsedMs).coerceAtLeast(0L)
+val elapsedThisCircle = (SystemClock.uptimeMillis() - traceStart).coerceAtMost(remainingForThisCircle)
+totalElapsedMs += elapsedThisCircle
         val circleResult = Scorer.score(
             points, pointCount, cx, cy, radius, tolerance,
             elapsedThisCircle, interrupted
