@@ -23,6 +23,13 @@ class ExplosionView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
 
+    companion object {
+        fun tierForScore(score: Int): Int {
+            if (score < 750) return 0
+            return ((score - 750).coerceAtLeast(0) / 50).coerceIn(0, 5)
+        }
+    }
+
     private data class Particle(
         val angle: Float,       // radians
         val speed: Float,       // px/unit-time (scaled by progress)
@@ -57,7 +64,7 @@ class ExplosionView @JvmOverloads constructor(
         originY = cy
 
         // Scale factor: 0.0 at 750, 1.0 at 1000. Bumps every 50 pts.
-        val tier = ((score - 750) / 50).coerceIn(0, 5)   // 0..5
+        val tier = tierForScore(score)
         val scale = (tier + 1) / 6f                        // 1/6 .. 1.0
 
         val particleCount = (30 + 50 * scale).toInt()

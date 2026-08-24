@@ -7,13 +7,22 @@ Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-See `PLAN.md` for what's coming next.
+### Added
+
+- Black game field background on the main view to match the planned v0.2 styling.
+- Score-based explosion overlay on round completion for high-scoring traces, with tiered intensity for 750–1000 scores.
+- Explosion tier helper and regression coverage for the score bands described in the roadmap.
+
+### Fixed
+
+- Confirmed the minimum circle radius is set at 15 dp in the runtime logic to keep the target physically traceable.
 
 ---
 
 ## [0.1.0] — 2026-08-23 — Initial working build
 
 ### Added
+
 - Core game loop: randomly sized/positioned circle, 3-second countdown, touch tracing.
 - `GameView.kt` — custom `View` handling circle rendering, touch events, and the frame-by-frame timer.
 - `Scorer.kt` — pure Kotlin scoring engine (accuracy from mean edge deviation, 36-sector coverage, speed factor). Score range 0–1000.
@@ -24,6 +33,7 @@ See `PLAN.md` for what's coming next.
 - AppCompat-only UI, `minSdk 21`.
 
 ### Fixed / Renamed
+
 - Project originally scaffolded as **CircleTrace**; renamed to **SpeedTracer** across all files:
   - `settings.gradle.kts` `rootProject.name`
   - `app/build.gradle.kts` `namespace` + `applicationId` → `com.lpmoore.speedtracer`
