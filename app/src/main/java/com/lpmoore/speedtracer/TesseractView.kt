@@ -230,7 +230,7 @@ addListener(object : android.animation.AnimatorListenerAdapter() {
         canvas.drawText("Tap anywhere to return", cx, cy + scale + 80f * density, textPaint)
     }
 
-    private fun Float.sp(): Float = this * density
+private fun Float.sp(): Float = this * resources.displayMetrics.scaledDensity
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
