@@ -1,8 +1,12 @@
 <resources>
-    <color name="bg">#FFF7F3EC</color>
+    <color name="bg">#FF000000</color>
     <color name="circle">#FF2D6CDF</color>
     <color name="trace">#FF22B573</color>
     <color name="dot">#FFE53935</color>
-    <color name="text">#FF222222</color>
-    <color name="panel">#F2FFFFFF</color>
+    <color name="text">#FFFFFFFF</color>
+    <color name="panel">#E6111111</color>
+    <!-- Explosion particles -->
+    <color name="explosion_core">#FFFFFFAA</color>
+    <color name="explosion_mid">#FFFF6600</color>
+    <color name="explosion_outer">#FFCC2200</color>
 </resources>

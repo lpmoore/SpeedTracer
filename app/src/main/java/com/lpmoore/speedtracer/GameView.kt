@@ -28,7 +28,7 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
         private set
 
     private val density = resources.displayMetrics.density
-    private val minRadius = 5f * density      // Step 2: 5dp .. 100dp
+    private val minRadius = 15f * density     // 15dp ≈ 3/16" diameter at 160dpi baseline
     private val maxRadius = 100f * density
     private val dotDurationMs = 700L
 
