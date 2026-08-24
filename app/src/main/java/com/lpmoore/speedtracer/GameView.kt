@@ -16,9 +16,6 @@ import kotlin.random.Random
 class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
 
-    init {
-        setBackgroundColor(ContextCompat.getColor(context, R.color.bg))
-    }
 
     enum class State { IDLE, READY, TRACING, FINISHED }
 
