@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Local Android SDK / NDK config (machine-specific)
+local.properties
+
+# IntelliJ / Android Studio
+*.iml
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Keystore files
+*.jks
+*.keystore

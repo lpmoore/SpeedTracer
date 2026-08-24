@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SpeedTracer</string>
+    <string name="start">Start</string>
+    <string name="play_again">Play again</string>
+    <string name="history">Previous scores</string>
+    <string name="history_empty">No scores yet.</string>
+    <string name="close">Close</string>
+</resources>

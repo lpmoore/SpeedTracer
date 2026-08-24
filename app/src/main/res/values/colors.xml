@@ -1,0 +1,8 @@
+<resources>
+    <color name="bg">#FFF7F3EC</color>
+    <color name="circle">#FF2D6CDF</color>
+    <color name="trace">#FF22B573</color>
+    <color name="dot">#FFE53935</color>
+    <color name="text">#FF222222</color>
+    <color name="panel">#F2FFFFFF</color>
+</resources>
