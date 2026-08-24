@@ -35,12 +35,12 @@ class ScorerTest {
     }
 
     @Test fun explosionTierMatchesPlanBands() {
-        assertEquals(0, ExplosionView.tierForScore(750))
-        assertEquals(1, ExplosionView.tierForScore(800))
-        assertEquals(2, ExplosionView.tierForScore(850))
-        assertEquals(3, ExplosionView.tierForScore(900))
-        assertEquals(4, ExplosionView.tierForScore(950))
+        assertEquals(0, ExplosionView.tierForScore(500))
+        assertEquals(1, ExplosionView.tierForScore(600))
+        assertEquals(2, ExplosionView.tierForScore(700))
+        assertEquals(3, ExplosionView.tierForScore(800))
+        assertEquals(4, ExplosionView.tierForScore(900))
         assertEquals(5, ExplosionView.tierForScore(1000))
-        assertEquals(0, ExplosionView.tierForScore(749))
+        assertEquals(0, ExplosionView.tierForScore(499))
     }
 }

@@ -59,8 +59,10 @@ class MainActivity : AppCompatActivity(), GameView.Listener {
     override fun onRoundFinished(result: RoundResult) {
         store.add(result)
         refreshBest()
-        val (cx, cy) = game.circleCenter()
-        explosionView.explode(cx, cy, result.score)
+        if (result.score >= 500) {
+            val (cx, cy) = game.circleCenter()
+            explosionView.explode(cx, cy, result.score)
+        }
         resultScore.text = result.score.toString()
         resultDetails.text = buildString {
             append("Accuracy ${result.accuracyPct}%  •  Coverage ${result.coveragePct}%\n")
