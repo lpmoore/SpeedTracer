@@ -107,11 +107,13 @@ class TesseractView @JvmOverloads constructor(
                 progress = it.animatedValue as Float
                 invalidate()
             }
-            addListener(object : android.animation.AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: android.animation.Animator) {
-                    visibility = GONE
-                    onDismissListener?.invoke()
-                }
+addListener(object : android.animation.AnimatorListenerAdapter() {
+    override fun onAnimationEnd(animation: android.animation.Animator) {
+        visibility = GONE
+        onDismissListener?.invoke()
+        onDismissListener = null
+    }
+})
             })
             start()
         }
