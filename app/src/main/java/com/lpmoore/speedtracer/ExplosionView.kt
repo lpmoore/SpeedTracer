@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 /**
  * Transparent overlay that renders a particle explosion at a given point.
- * Explosion scale is driven by score (750–1000).
+ * Explosion scale is driven by score (500–1000).
  *
  * Usage:
  *   explosionView.explode(cx, cy, score)
@@ -25,8 +25,8 @@ class ExplosionView @JvmOverloads constructor(
 
     companion object {
         fun tierForScore(score: Int): Int {
-            if (score < 750) return 0
-            return ((score - 750).coerceAtLeast(0) / 50).coerceIn(0, 5)
+            if (score < 500) return 0
+            return ((score - 500).coerceAtLeast(0) / 100).coerceIn(0, 5)
         }
     }
 
@@ -53,24 +53,24 @@ class ExplosionView @JvmOverloads constructor(
     private var animator: ValueAnimator? = null
 
     /**
-     * @param score 750–1000. Controls particle count, speed, and size.
-     *              Clamped; scores below 750 produce no explosion.
+     * @param score 500–1000. Controls particle count, speed, and size.
+     *              Clamped; scores below 500 produce no explosion.
      */
     fun explode(cx: Float, cy: Float, score: Int) {
-        if (score < 750) { visibility = GONE; return }
+        if (score < 500) { visibility = GONE; return }
 
         animator?.cancel()
         originX = cx
         originY = cy
 
-        // Scale factor: 0.0 at 750, 1.0 at 1000. Bumps every 50 pts (5 tiers).
+        // Scale factor: 0.0 at 500, 1.0 at 1000. Bumps every 100 pts (5 tiers).
         val tier = tierForScore(score)
         val scale = tier / 5f                              // 0.0 .. 1.0
 
         val particleCount = (30 + 50 * scale).toInt()
         val maxSpeed = (200f + 400f * scale) * density
         val maxDotRadius = (4f + 8f * scale) * density
-        val durationMs = (600L + (600L * scale).toLong())
+        val durationMs = 1000L
 
         particles = List(particleCount) {
             val angle = Random.nextFloat() * 2f * Math.PI.toFloat()
